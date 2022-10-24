@@ -1,0 +1,190 @@
+<html>
+<head>
+<title>First Block-Chain App</title>
+
+<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+	
+		.container{
+			height: 450px;
+			width: 700px;
+			padding: 10px;
+			text-align: center;
+			margin-top: 5%;
+			margin-left: 20%;
+			margin-right: 20%;
+			box-shadow: 0 1rem 3rem rgba(0,0,0,.175);
+			
+		}
+	#show_balance{
+			padding:10px;
+			color:green;
+
+		}
+		.p-5{
+			padding:5px;
+		}
+		.m-5{
+			margin:5px;
+		}
+		table{
+		
+			width:400px;
+			margin-top:20px;
+		}
+		tr{
+			padding:10px;
+		}
+		td{
+			padding:5px;
+		}
+	</style>
+
+</head>
+
+<body>
+	<div class="container">
+		<h3>Smart-Contract Using Web3 js</h3><hr>
+		<center>
+		<table border="1">
+			<tr>
+				<td width="180">
+				<span  id="show_balance"></span>
+				</td>
+				<td>
+				<button id="show_balance_btn">Show Balance</button>
+				</td>
+			</tr>
+
+			<tr>
+				<td width="180">
+					<input id="add_balance" type="text">
+				</td>
+				<td>
+					<button id="add_balance_btn">Add Balance</button>
+				</td>
+			</tr>
+			<tr>
+				<td width="180">
+					<input id="get_balance" type="text">
+				</td>
+				<td>
+					<button id="get_balance_btn">Get Balance</button>
+				</td>
+			</tr>
+		</table>
+		</center>
+	</div>
+</body>
+
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script type="module">
+	import tronweb from 'https://cdn.skypack.dev/tronweb';
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script>
+
+
+
+<script>
+
+    var contract ;
+    $(document).ready(function(){
+
+       
+       web3 = new Web3(web3.currentProvider);
+	   window.ethereum.enable();
+       const address = "0xce69bb3927Cd7f3731bD82734b9991E1E3dE0a03";
+       const abi = [
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "money",
+				"type": "int256"
+			}
+		],
+		"name": "addBlance",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "money",
+				"type": "int256"
+			}
+		],
+		"name": "getBalance",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "checkBalance",
+		"outputs": [
+			{
+				"name": "",
+				"type": "int256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+
+        contract =  new web3.eth.Contract(abi,address); 
+
+		$("#show_balance_btn").click(function(){
+			contract.methods.checkBalance().call().then(function(amount){
+				$("#show_balance").html(amount);
+				console.log(amount);
+        	});
+		});
+
+		$("#add_balance_btn").click(function(){
+			var amount =0;
+			amount = parseInt($("#add_balance").val());
+			web3.eth.getAccounts().then(function(Accounts){
+				console.log(Accounts);
+				return contract.methods.addBlance(amount).send({from:Accounts[0]});
+			}).then(function(data){
+				console.log(data);
+			}).catch(function(er){
+				console.log(er);
+			});
+		});
+
+		$("#get_balance_btn").click(function(){
+			var amount = parseInt($("#get_balance").val());
+			web3.eth.getAccounts().then((accounts)=>{
+				return contract.methods.getBalance(amount).send({from:accounts[0]});
+			}).then(function(d){
+				console.log(d);
+			}).catch((err)=>{
+				console.log(err);
+			});
+		});
+
+    });
+</script>
